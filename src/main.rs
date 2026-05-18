@@ -7,6 +7,7 @@ use crate::services::index::{edit_age_by_name, index_hash};
 use crate::services::put::put_data_in_file;
 use crate::services::terminal::in_data;
 use std::collections::HashMap;
+use crate::services::server::server_init;
 use std::thread;
 
 fn main() {
@@ -18,7 +19,8 @@ fn main() {
         println!("2. Recovery content by name");
         println!("3. Edit age by name");
         println!("4. Simulate concurrent writes");
-        println!("5. Close");
+        println!("5. Start TCP Server");
+        println!("6. Close");
         let option = in_data("option");
         match option.as_str() {
             "1" => {
@@ -27,7 +29,7 @@ fn main() {
                 let content = Content { name, age };
                 put_data_in_file(name_file, &content);
                 index_hash(&mut index_map, &content);
-                println!("Data saved!");
+                println!("Data saved!:");
             }
             "2" => {
                 let name: String = in_data("name");
@@ -64,6 +66,9 @@ fn main() {
                 t2.join().unwrap();
             }
             "5" => {
+                server_init(&mut index_map);
+            }
+            "6" => {
                 print!("Closing .....");
                 break;
             }
