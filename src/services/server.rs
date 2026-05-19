@@ -1,5 +1,6 @@
 use crate::domain::content::Content;
 use crate::services::index::recovery_content_by_name;
+use serde_json;
 use std::collections::HashMap;
 use std::io::{Read, Write};
 use std::net::TcpListener;
@@ -17,6 +18,19 @@ pub fn server_init(index_map: &mut HashMap<String, Content>) {
             let content = recovery_content_by_name(index_map, &name);
             let response = format!("{{\"name\":\"{}\",\"age\":{}}}", content.name, content.age);
             stream.write(response.as_bytes()).unwrap();
+        }
+        if request.starts_with("POST") {
+            let lines: Vec<&str> = request.lines().collect();
+            let method = lines[0];
+            let body = lines[1];
+            let content: Content = serde_json::from_str(body).unwrap();
+            //TODO-RESOLVE-POST(DISK - INDEX MAP)
+        }
+
+        if request.starts_with("PUT") {
+            let lines: Vec<&str> = request.lines().collect();
+            let method = lines[0];
+            //TODO-RESOLVE-PUT
         }
     }
 }
